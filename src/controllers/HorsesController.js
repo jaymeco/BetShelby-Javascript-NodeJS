@@ -1,5 +1,3 @@
-import { request } from 'express';
-
 const knex = require('../database');
 
 class HorsesController {
@@ -34,4 +32,4 @@ class HorsesController {
   }
 }
 
-export default HorsesController;
+module.exports = HorsesController;
