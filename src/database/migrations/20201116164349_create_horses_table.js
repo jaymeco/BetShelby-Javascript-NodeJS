@@ -1,5 +1,5 @@
 exports.up = function (knex) {
-  return knex.schema.createTable('hourses', function (table) {
+  return knex.schema.createTable('horses', function (table) {
     table.string('id').primary().notNullable();
     table.string('name').notNullable();
     table.string('sex').notNullable();
