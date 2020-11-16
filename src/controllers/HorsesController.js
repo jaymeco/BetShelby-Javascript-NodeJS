@@ -1,3 +1,4 @@
+const uuid = require('uuid');
 const knex = require('../database');
 
 class HorsesController {
@@ -13,8 +14,11 @@ class HorsesController {
         description,
       } = request.body;
 
+      const id = uuid.v4();
+
       const horse = await knex('horses')
         .insert({
+          id,
           name,
           sex,
           breed,
