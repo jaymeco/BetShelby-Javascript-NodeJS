@@ -85,6 +85,20 @@ class HorsesController {
       response.status(400).json({ error });
     }
   }
+
+  async show(request, response) {
+    try {
+      const { id } = request.params;
+
+      const horse = await knex('horses')
+        .where({ id })
+        .join('users', 'horses.user_id', '=', 'users.id')
+        .select('*');
+      return response.json(horse[0]);
+    } catch (error) {
+      return response.status(400).json({ error });
+    }
+  }
 }
 
 module.exports = HorsesController;
