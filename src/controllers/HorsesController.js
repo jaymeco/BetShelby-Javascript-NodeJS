@@ -7,7 +7,9 @@ class HorsesController {
 
     try {
       const {
-        user,
+        userName,
+        userEmail,
+        userPhone,
         name,
         sex,
         breed,
@@ -17,8 +19,14 @@ class HorsesController {
         description,
       } = request.body;
 
+      const images = request.files;
+      const imagesFiltered = images.map(image => {
+        return `http://localhost:3333/files/${image.filename}`;
+      });
+
+      const stringfiedImages = JSON.stringify(imagesFiltered);
       const userExits = await knex('users')
-        .where({ email: user.email })
+        .where({ email: userEmail })
         .select();
 
       if (!userExits.length) {
@@ -27,9 +35,9 @@ class HorsesController {
         const userCreated = await trx('users')
           .insert({
             id: user_id,
-            name: user.name,
-            email: user.email,
-            phone: user.phone,
+            name: userName,
+            email: userEmail,
+            phone: userPhone,
           })
           .returning('id');
 
@@ -44,6 +52,7 @@ class HorsesController {
             age,
             weight,
             height,
+            images: stringfiedImages,
             user_id: userCreated[0],
             description,
           })
@@ -64,6 +73,7 @@ class HorsesController {
           age,
           weight,
           height,
+          images: stringfiedImages,
           user_id: userExits[0].id,
           description,
         })
