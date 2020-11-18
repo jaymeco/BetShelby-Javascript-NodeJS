@@ -10,5 +10,6 @@ const horsesController = new HorsesController();
 const upload = multer(uploadConfig);
 
 horsesRoutes.post('/', upload.array('images'), horsesController.create);
+horsesRoutes.get('/:id', horsesController.show);
 
 module.exports = horsesRoutes;

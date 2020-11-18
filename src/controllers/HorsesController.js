@@ -91,9 +91,16 @@ class HorsesController {
       const { id } = request.params;
 
       const horse = await knex('horses')
-        .where({ id })
         .join('users', 'horses.user_id', '=', 'users.id')
-        .select('*');
+        .where('horses.id', '=', id)
+        .select([
+          'horses.*',
+          'users.name as user_name',
+          'users.email as user_email',
+          'users.phone as user_phone',
+        ]);
+      delete horse[0].user_id;
+
       return response.json(horse[0]);
     } catch (error) {
       return response.status(400).json({ error });
