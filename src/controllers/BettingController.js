@@ -2,6 +2,26 @@ const uuid = require('uuid');
 const knex = require('../database');
 
 class BettingController {
+  async index(request, response) {
+    try {
+      const bettings = await knex('betting')
+        .join('horses', 'betting.horse_id', '=', 'horses.id')
+        .join('users', 'betting.user_id', '=', 'users.id')
+        .select([
+          'betting.*',
+          'users.name as user_name',
+          'users.email as user_email',
+          'users.phone as user_phone',
+          'horses.name as horse_name',
+          'horses.images as horse_images',
+        ]);
+
+      return response.json(bettings);
+    } catch (error) {
+      response.status(400).json({ error });
+    }
+  }
+
   async create(resquest, response) {
     const trx = await knex.transaction();
 
