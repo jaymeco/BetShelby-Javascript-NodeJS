@@ -3,7 +3,7 @@ const knex = require('../database');
 
 class BettingController {
   async create(resquest, response) {
-    const trx = knex.transaction();
+    const trx = await knex.transaction();
 
     const { userName, userEmail, userPhone, betAmount, horses } = resquest.body;
 
@@ -24,21 +24,22 @@ class BettingController {
           })
           .returning('id');
 
-        const bettingId = uuid.v4();
-
         horses.map(async horse => {
-          await knex('betting').insert({
+          const bettingId = uuid.v4();
+          await trx('betting').insert({
             id: bettingId,
             bet_amount: betAmount,
             horse_id: horse.id,
             user_id: userCreated[0],
           });
         });
+
+        await trx.commit();
+        return response.status(201).json({ success: 'Aposta realizada!' });
       }
 
-      const id = uuid.v4();
-
       horses.map(async horse => {
+        const id = uuid.v4();
         await knex('betting').insert({
           id,
           bet_amount: betAmount,
@@ -49,6 +50,7 @@ class BettingController {
 
       return response.status(201).json({ success: 'Aposta realizada!' });
     } catch (error) {
+      await trx.rollback();
       return response.status(400).json({ error });
     }
   }
